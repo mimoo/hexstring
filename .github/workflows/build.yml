@@ -23,7 +23,7 @@ jobs:
           opam pin add hexstring .
 
           # make sure tests pass
-          opam install dune qcheck
+          opam install dune qcheck opam-dune-lint
           dune runtest # inline tests
           dune exec lib/tests/tests.exe # property tests
 
