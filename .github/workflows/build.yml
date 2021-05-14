@@ -15,6 +15,13 @@ jobs:
         with:
           ocaml-version: 4.12.0
 
+      - name: Make sure tests pass
+        run: |
+          eval $(opam env)
+          opam install dune
+          dune runtest
+
       - name: Make sure we can opam pin
         run: |
+          eval $(opam env)
           opam pin add hexstring .
