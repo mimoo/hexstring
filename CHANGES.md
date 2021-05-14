@@ -1,3 +1,6 @@
+## 0.1.2 (2020-05-14)
+
+Let's see if this works.
 ## 0.1.1 (2020-05-14)
 
 Error releasing 0.1, trying again.
