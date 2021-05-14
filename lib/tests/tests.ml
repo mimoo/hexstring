@@ -22,7 +22,6 @@ let decode_arbitrary_hexstring =
         let s = arb |> List.to_seq |> String.of_seq in
         let len = List.length arb in
         let decoded = Hexstring.decode s in
-        Format.printf "gen: %s\n" s;
         match decoded with
         | Ok _ when len mod 2 <> 0 -> false
         | Ok res when Bytes.length res <> len / 2 -> false
