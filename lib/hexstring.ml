@@ -1,17 +1,35 @@
 (* encoding bytearray -> hexstring *)
 
 let encode (bytearray : bytes) : string =
-  let rec encode_rec fold bytearray =
-    let length = Bytes.length bytearray in
-    if length = 0 then fold
-    else
-      let c = Bytes.get bytearray 0 in
-      let encoding = int_of_char c |> Format.sprintf "%02x" in
-      let fold = fold ^ encoding in
-      let bytearray = Bytes.sub bytearray 1 (length - 1) in
-      encode_rec fold bytearray
+  let dummy_char = '_' in
+  let start_of_digit_0_in_ascii_table = 0x30 in
+  let start_of_lower_case_a_in_ascii_table = 0x61 in
+  let hex_digit_of_int (x : int) : char =
+    assert (x >= 0);
+    assert (x < 16);
+    char_of_int (
+      if x < 10 then
+        x + start_of_digit_0_in_ascii_table
+      else
+        x + start_of_lower_case_a_in_ascii_table
+    )
   in
-  encode_rec "" bytearray
+  let rec aux bytearray len cur_pos buf =
+    if cur_pos < len then
+      let x = int_of_char @@ Bytes.get bytearray cur_pos in
+      let c1 = hex_digit_of_int (x / 0x10) in
+      let c2 = hex_digit_of_int (x mod 0x10) in
+      Bytes.set buf (cur_pos * 2) c1;
+      Bytes.set buf (cur_pos * 2 + 1) c2;
+      aux bytearray len (succ cur_pos) buf
+    else
+      ()
+  in
+  let len = Bytes.length bytearray in
+  let buf_len = 2 * len in
+  let buf = Bytes.make buf_len dummy_char in
+  aux bytearray len 0 buf;
+  Bytes.to_string buf
 
 let%test "encoding" =
   let bytearray = Bytes.of_string "\x01\x02\x03\x04" in
