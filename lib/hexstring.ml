@@ -75,26 +75,36 @@ let%test "decoding two erroneous chars" =
 
 (* decoding hexstring -> bytearray *)
 
-let rec parse_string (res : bytes) (offset : int) (ss : string) =
-  match String.length ss with
-  | 0 -> Ok res
-  | _ -> (
-      let byte = Str.first_chars ss 2 in
-      let rest = Str.string_after ss 2 in
-      let c1 = byte.[0] in
-      let c2 = byte.[1] in
+let parse_string (ss : string) : (bytes, int) result =
+  let rec aux res_cur_pos res_len ss res =
+    if res_cur_pos < res_len then (
+      let pos = 2 * res_cur_pos in
+      let c1 = ss.[pos] in
+      let c2 = ss.[pos + 1] in
       match decode_2chars (c1, c2) with
-      | Error err -> Error err
-      | Ok c ->
-          Bytes.set res offset c;
-          parse_string res (offset + 1) rest)
+      | Error _ -> Error pos
+      | Ok b ->
+        Bytes.set res res_cur_pos b;
+        aux (succ res_cur_pos) res_len ss res
+    )
+    else
+      Ok res
+  in
+  match String.length ss with
+  | 0 -> Ok Bytes.empty
+  | _ ->
+    let len = String.length ss in
+    let res = Bytes.make (len / 2) '\x00' in
+    aux 0 (Bytes.length res) ss res
 
 let decode hexstring =
-  match String.length hexstring with
-  | len when len mod 2 <> 0 -> Error "length must be a multiple of 2"
-  | len ->
-      let res = Bytes.make (len / 2) '\x00' in
-      parse_string res 0 hexstring
+  let len = String.length hexstring in
+  if len mod 2 <> 0 then
+    Error "length must be a multiple of 2"
+  else
+    match parse_string hexstring with
+    | Error i -> Error (Printf.sprintf "invalid char at %d" i)
+    | Ok bytes -> Ok bytes
 
 let%test "decoding empty hexstring" =
   let d = decode "" in
