@@ -11,7 +11,7 @@ let encode (bytearray : bytes) : string =
       if x < 10 then
         x + start_of_digit_0_in_ascii_table
       else
-        x + start_of_lower_case_a_in_ascii_table
+        x - 10 + start_of_lower_case_a_in_ascii_table
     )
   in
   let rec aux bytearray len cur_pos buf =
@@ -32,9 +32,9 @@ let encode (bytearray : bytes) : string =
   Bytes.to_string buf
 
 let%test "encoding" =
-  let bytearray = Bytes.of_string "\x01\x02\x03\x04" in
+  let bytearray = Bytes.of_string "\x01\x02\x03\x04\xa0\xbd\xff" in
   let hexstring = encode bytearray in
-  hexstring = "01020304"
+  hexstring = "01020304a0bdff"
 
 (* helper to decode a byte *)
 
