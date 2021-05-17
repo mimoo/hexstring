@@ -17,8 +17,8 @@ let encode (bytearray : bytes) : string =
   let rec aux bytearray len cur_pos buf =
     if cur_pos < len then
       let x = int_of_char @@ Bytes.get bytearray cur_pos in
-      let c1 = hex_digit_of_int (x / 0x10) in
-      let c2 = hex_digit_of_int (x mod 0x10) in
+      let c1 = hex_digit_of_int (x lsr 4) in
+      let c2 = hex_digit_of_int (x land 0x0F) in
       Bytes.set buf (cur_pos * 2) c1;
       Bytes.set buf (cur_pos * 2 + 1) c2;
       aux bytearray len (succ cur_pos) buf
