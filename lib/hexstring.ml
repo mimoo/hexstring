@@ -30,9 +30,9 @@ let encode (bytearray : bytes) : string =
   Bytes.to_string buf
 
 let%test "encoding" =
-  let bytearray = Bytes.of_string "\x01\x02\x03\x04\xa0\xbd\xff" in
+  let bytearray = Bytes.of_string "\x01\x02\x03\x04\x0a\xbd\xff" in
   let hexstring = encode bytearray in
-  hexstring = "01020304a0bdff"
+  hexstring = "010203040abdff"
 
 (* helper to decode a byte *)
 
