@@ -34,30 +34,30 @@ let%test "encoding" =
 (* helper to decode a byte *)
 
 let decode_1char = function
-  | '0' -> Ok 0
-  | '1' -> Ok 1
-  | '2' -> Ok 2
-  | '3' -> Ok 3
-  | '4' -> Ok 4
-  | '5' -> Ok 5
-  | '6' -> Ok 6
-  | '7' -> Ok 7
-  | '8' -> Ok 8
-  | '9' -> Ok 9
-  | 'a' -> Ok 10
-  | 'b' -> Ok 11
-  | 'c' -> Ok 12
-  | 'd' -> Ok 13
-  | 'e' -> Ok 14
-  | 'f' -> Ok 15
-  | _ -> Error "invalid character"
+  | '0' -> Some 0
+  | '1' -> Some 1
+  | '2' -> Some 2
+  | '3' -> Some 3
+  | '4' -> Some 4
+  | '5' -> Some 5
+  | '6' -> Some 6
+  | '7' -> Some 7
+  | '8' -> Some 8
+  | '9' -> Some 9
+  | 'a' -> Some 10
+  | 'b' -> Some 11
+  | 'c' -> Some 12
+  | 'd' -> Some 13
+  | 'e' -> Some 14
+  | 'f' -> Some 15
+  | _ -> None
 
 let decode_2chars ((c1, c2) : char * char) : (char, string) result =
   let fst = decode_1char c1 in
   let snd = decode_1char c2 in
   match (fst, snd) with
-  | Error _, _ | _, Error _ -> Error "nope"
-  | Ok fst, Ok snd ->
+  | None, _ | _, None -> Error "nope"
+  | Some fst, Some snd ->
       let res = (fst lsl 4) lxor snd in
       Ok (char_of_int res)
 
