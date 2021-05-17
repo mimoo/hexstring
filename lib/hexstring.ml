@@ -52,7 +52,7 @@ let decode_1char = function
   | 'f' -> Some 15
   | _ -> None
 
-let decode_2chars ((c1, c2) : char * char) : (char, string) result =
+let decode_2chars c1 c2 : (char, string) result =
   let fst = decode_1char c1 in
   let snd = decode_1char c2 in
   match (fst, snd) with
@@ -62,15 +62,15 @@ let decode_2chars ((c1, c2) : char * char) : (char, string) result =
       Ok (char_of_int res)
 
 let%test "decoding two chars 01" =
-  let d = decode_2chars ('0', '1') in
+  let d = decode_2chars '0' '1' in
   d = Ok '\x01'
 
 let%test "decoding two chars ff" =
-  let d = decode_2chars ('f', 'f') in
+  let d = decode_2chars 'f' 'f' in
   d = Ok '\xff'
 
 let%test "decoding two erroneous chars" =
-  let d = decode_2chars ('z', 'f') in
+  let d = decode_2chars 'z' 'f' in
   Result.is_error d
 
 (* decoding hexstring -> bytearray *)
@@ -81,7 +81,7 @@ let parse_string (ss : string) : (bytes, int) result =
       let pos = 2 * res_cur_pos in
       let c1 = ss.[pos] in
       let c2 = ss.[pos + 1] in
-      match decode_2chars (c1, c2) with
+      match decode_2chars c1 c2 with
       | Error _ -> Error pos
       | Ok b ->
         Bytes.set res res_cur_pos b;
