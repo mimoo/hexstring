@@ -7,21 +7,18 @@ let encode (bytearray : bytes) : string =
   let hex_digit_of_int (x : int) : char =
     assert (x >= 0);
     assert (x < 16);
-    char_of_int (
-      if x < 10 then
-        x + start_of_digit_0_in_ascii_table
-      else
-        x - 10 + start_of_lower_case_a_in_ascii_table
-    )
+    char_of_int
+      (if x < 10 then x + start_of_digit_0_in_ascii_table
+      else x - 10 + start_of_lower_case_a_in_ascii_table)
   in
   let rec aux bytearray len cur_pos buf =
-    if cur_pos < len then
+    if cur_pos < len then (
       let x = int_of_char @@ Bytes.get bytearray cur_pos in
       let c1 = hex_digit_of_int (x lsr 4) in
       let c2 = hex_digit_of_int (x land 0x0F) in
       Bytes.set buf (cur_pos * 2) c1;
-      Bytes.set buf (cur_pos * 2 + 1) c2;
-      aux bytearray len (succ cur_pos) buf
+      Bytes.set buf ((cur_pos * 2) + 1) c2;
+      aux bytearray len (succ cur_pos) buf)
   in
   let len = Bytes.length bytearray in
   let buf_len = 2 * len in
