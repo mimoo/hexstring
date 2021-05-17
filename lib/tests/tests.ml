@@ -22,8 +22,7 @@ let decode_encode =
         let s = arb |> List.to_seq |> String.of_seq in
         match Hexstring.decode s with
         | Error _ -> false
-        | Ok r ->
-          Hexstring.encode r = s))
+        | Ok r -> Hexstring.encode r = s))
 
 let arbitrary_hexstring =
   let open QCheck.Gen in
