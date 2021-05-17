@@ -22,8 +22,6 @@ let encode (bytearray : bytes) : string =
       Bytes.set buf (cur_pos * 2) c1;
       Bytes.set buf (cur_pos * 2 + 1) c2;
       aux bytearray len (succ cur_pos) buf
-    else
-      ()
   in
   let len = Bytes.length bytearray in
   let buf_len = 2 * len in
