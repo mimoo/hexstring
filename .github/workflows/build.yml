@@ -1,6 +1,12 @@
 name: check build
 
-on: [pull_request, push]
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
 
 jobs:
   run_dune_build:
@@ -19,16 +25,19 @@ jobs:
         run: |
           set -x
           eval $(opam env)
+          
           # make sure we can run opam pin
           opam pin add hexstring .
 
           # make sure tests pass
-          opam install dune qcheck opam-dune-lint ocamlformat
-          dune runtest # inline tests
-          dune exec lib/tests/tests.exe # property tests
+          make deps
+          make tests
 
           # make sure opam package file is valid
           opam-dune-lint
 
           # make sure the project is well-formatted
           dune build @fmt
+
+          # run bench
+          make bench

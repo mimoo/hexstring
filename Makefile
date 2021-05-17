@@ -3,7 +3,7 @@
 all: deps tests lib
 
 deps:
-	opam install qcheck core core_bench
+	opam install dune qcheck core core_bench opam-dune-lint ocamlformat
 
 lib:
 	dune build -p hexstring
