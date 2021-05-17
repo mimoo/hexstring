@@ -52,26 +52,26 @@ let decode_1char = function
   | 'f' -> Some 15
   | _ -> None
 
-let decode_2chars c1 c2 : (char, string) result =
+let decode_2chars c1 c2 : char option =
   let fst = decode_1char c1 in
   let snd = decode_1char c2 in
   match (fst, snd) with
-  | None, _ | _, None -> Error "nope"
+  | None, _ | _, None -> None
   | Some fst, Some snd ->
       let res = (fst lsl 4) lxor snd in
-      Ok (char_of_int res)
+      Some (char_of_int res)
 
 let%test "decoding two chars 01" =
   let d = decode_2chars '0' '1' in
-  d = Ok '\x01'
+  d = Some '\x01'
 
 let%test "decoding two chars ff" =
   let d = decode_2chars 'f' 'f' in
-  d = Ok '\xff'
+  d = Some '\xff'
 
 let%test "decoding two erroneous chars" =
   let d = decode_2chars 'z' 'f' in
-  Result.is_error d
+  Option.is_none d
 
 (* decoding hexstring -> bytearray *)
 
@@ -82,8 +82,8 @@ let parse_string (ss : string) : (bytes, int) result =
       let c1 = ss.[pos] in
       let c2 = ss.[pos + 1] in
       match decode_2chars c1 c2 with
-      | Error _ -> Error pos
-      | Ok b ->
+      | None -> Error pos
+      | Some b ->
         Bytes.set res res_cur_pos b;
         aux (succ res_cur_pos) res_len ss res
     )
