@@ -7,6 +7,24 @@ let encode_decode =
         let hexstring = Bytes.of_string some_string |> Hexstring.encode in
         Hexstring.decode hexstring = Ok expected_result))
 
+let arbitrary_valid_hexstring =
+  let open QCheck.Gen in
+  let c = char_range 'a' 'f' in
+  let d = char_range '0' '9' in
+  let elem_gen = oneof [ c; d ] in
+  let size_gen = map (fun x -> 2 * x) nat in
+  list_size size_gen elem_gen
+
+let decode_encode =
+  QCheck.(
+    Test.make ~count:1000 ~name:"decode -> encode"
+      (make arbitrary_valid_hexstring) (fun arb ->
+        let s = arb |> List.to_seq |> String.of_seq in
+        match Hexstring.decode s with
+        | Error _ -> false
+        | Ok r ->
+          Hexstring.encode r = s))
+
 let arbitrary_hexstring =
   let open QCheck.Gen in
   let c = char_range 'a' 'f' in
@@ -30,4 +48,4 @@ let decode_arbitrary_hexstring =
 
 let () =
   QCheck_base_runner.run_tests_main
-    [ encode_decode; decode_arbitrary_hexstring ]
+    [ encode_decode; decode_encode; decode_arbitrary_hexstring ]
