@@ -8,8 +8,8 @@ let encode (bytearray : bytes) : string =
     assert (x >= 0);
     assert (x < 16);
     char_of_int
-      (if x < 10 then x + start_of_digit_0_in_ascii_table
-      else x - 10 + start_of_lower_case_a_in_ascii_table)
+      ( if x < 10 then x + start_of_digit_0_in_ascii_table
+      else x - 10 + start_of_lower_case_a_in_ascii_table )
   in
   let rec aux bytearray len cur_pos buf =
     if cur_pos < len then (
@@ -18,7 +18,7 @@ let encode (bytearray : bytes) : string =
       let c2 = hex_digit_of_int (x land 0x0F) in
       Bytes.set buf (cur_pos * 2) c1;
       Bytes.set buf ((cur_pos * 2) + 1) c2;
-      aux bytearray len (succ cur_pos) buf)
+      aux bytearray len (succ cur_pos) buf )
   in
   let len = Bytes.length bytearray in
   let buf_len = 2 * len in
@@ -84,25 +84,18 @@ let decode hexstring =
       match decode_2chars c1 c2 with
       | None -> Error pos
       | Some b ->
-        Bytes.set res res_cur_pos b;
-        aux (succ res_cur_pos) res_len ss res
-    )
-    else
-      Ok res
+          Bytes.set res res_cur_pos b;
+          aux (succ res_cur_pos) res_len ss res )
+    else Ok res
   in
   let len = String.length hexstring in
-  if len mod 2 <> 0 then
-    Error "length must be a multiple of 2"
-  else if len = 0 then
-      Ok Bytes.empty
+  if len mod 2 <> 0 then Error "length must be a multiple of 2"
+  else if len = 0 then Ok Bytes.empty
   else
     let buf_len = len / 2 in
     let buf = Bytes.make buf_len '\x00' in
     aux 0 buf_len hexstring buf
-    |> Result.map_error
-      (fun i ->
-         Printf.sprintf "invalid char at %d" i
-      )
+    |> Result.map_error (fun i -> Printf.sprintf "invalid char at %d" i)
 
 let%test "decoding empty hexstring" =
   let d = decode "" in
