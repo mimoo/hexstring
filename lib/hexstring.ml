@@ -93,15 +93,14 @@ let decode hexstring =
   let len = String.length hexstring in
   if len mod 2 <> 0 then
     Error "length must be a multiple of 2"
-  else
-    if len = 0 then
+  else if len = 0 then
       Ok Bytes.empty
-    else
-      let len = String.length hexstring in
-      let res = Bytes.make (len / 2) '\x00' in
-      match aux 0 (Bytes.length res) hexstring res with
-      | Error i -> Error (Printf.sprintf "invalid char at %d" i)
-      | Ok bytes -> Ok bytes
+  else
+    let len = String.length hexstring in
+    let res = Bytes.make (len / 2) '\x00' in
+    match aux 0 (Bytes.length res) hexstring res with
+    | Error i -> Error (Printf.sprintf "invalid char at %d" i)
+    | Ok bytes -> Ok bytes
 
 let%test "decoding empty hexstring" =
   let d = decode "" in
