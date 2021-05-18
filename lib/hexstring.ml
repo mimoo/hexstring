@@ -96,7 +96,6 @@ let decode hexstring =
   else if len = 0 then
       Ok Bytes.empty
   else
-    let len = String.length hexstring in
     let res = Bytes.make (len / 2) '\x00' in
     match aux 0 (Bytes.length res) hexstring res with
     | Error i -> Error (Printf.sprintf "invalid char at %d" i)
