@@ -98,7 +98,7 @@ let decode hexstring =
   else
     let buf_len = len / 2 in
     let buf = Bytes.make buf_len '\x00' in
-    (aux 0 buf_len hexstring buf)
+    aux 0 buf_len hexstring buf
     |> Result.map_error
       (fun i ->
          Printf.sprintf "invalid char at %d" i
