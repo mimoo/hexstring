@@ -1,3 +1,7 @@
+## 0.2.1 (2020-05-18)
+
+Much more efficient implementations of encode and decode
+
 ## 0.2.0 (2020-05-14)
 
 The decode API cannot panic anymore!
