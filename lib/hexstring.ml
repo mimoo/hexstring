@@ -96,10 +96,13 @@ let decode hexstring =
   else if len = 0 then
       Ok Bytes.empty
   else
-    let res = Bytes.make (len / 2) '\x00' in
-    match aux 0 (Bytes.length res) hexstring res with
-    | Error i -> Error (Printf.sprintf "invalid char at %d" i)
-    | Ok bytes -> Ok bytes
+    let buf_len = len / 2 in
+    let buf = Bytes.make buf_len '\x00' in
+    (aux 0 buf_len hexstring buf)
+    |> Result.map_error
+      (fun i ->
+         Printf.sprintf "invalid char at %d" i
+      )
 
 let%test "decoding empty hexstring" =
   let d = decode "" in
