@@ -12,6 +12,11 @@ bench:
 	dune build lib/bench 
 	./_build/default/lib/bench/bench.exe
 
+coverage:
+	find . -name '*.coverage' | xargs rm -f
+	dune runtest --instrument-with bisect_ppx --force
+	bisect-ppx-report summary
+	bisect-ppx-report html
+
 tests:
 	dune runtest
-	dune exec lib/tests/tests.exe

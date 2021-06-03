@@ -2,6 +2,15 @@
  (name hexstring)
  (public_name hexstring)
  (libraries)
- (inline_tests)
  (preprocess
-  (pps ppx_inline_test)))
+  (pps ppx_inline_test))
+ (inline_tests)
+ (instrumentation
+  (backend bisect_ppx)))
+
+; run property-tests in libs/tests/
+
+(rule
+ (alias runtest)
+ (action
+  (run ./tests/tests.exe)))
