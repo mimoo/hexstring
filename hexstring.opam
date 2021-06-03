@@ -12,6 +12,7 @@ depends: [
   "dune" {>= "2.8"}
   "ppx_inline_test" {>= "v0.14.1"}
   "bisect_ppx" {>= "2.0.0"}
+  "qcheck" {>= 0.17}
 ]
 build: ["dune" "build" "-p" name "-j" jobs]
 dev-repo: "git+https://github.com/mimoo/hexstring.git"
