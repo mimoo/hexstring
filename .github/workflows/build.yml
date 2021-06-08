@@ -40,8 +40,8 @@ jobs:
 
           # run bench
           make bench
-
-	  # run format
-	  opam pin fromager git+https://github.com/mimoo/fromager
-	  fromager
-	  git diff
+          
+          # run format
+          opam pin fromager git+https://github.com/mimoo/fromager
+          fromager
+          git diff
