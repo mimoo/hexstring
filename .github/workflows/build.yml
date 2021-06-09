@@ -44,4 +44,4 @@ jobs:
           # run format
           opam pin fromager git+https://github.com/mimoo/fromager
           fromager
-          git diff
+          git diff --exit-code
